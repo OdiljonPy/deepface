@@ -34,7 +34,7 @@ def test_view(request):
         return Response(data)
 
     elif request.method == 'POST':
-        print(request.FILES)
+        # print(request.FILES)
         print(request.POST)
         img1 = 'tests_deepface/test_images/' + request.POST['img1']
         img2 = 'tests_deepface/test_images/' + request.POST['img2']
