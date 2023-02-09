@@ -36,8 +36,8 @@ def test_view(request):
     elif request.method == 'POST':
         # print(request.FILES)
         print(request.POST)
-        img1 = 'tests_deepface/test_images/' + request.POST['img1']
-        img2 = 'tests_deepface/test_images/' + request.POST['img2']
+        img1 = 'tests_deepface/fake/' + request.POST['img1']
+        img2 = 'tests_deepface/fake/' + request.POST['img2']
         # obj = Image.objects.create(img1=request.FILES['img1'], img2=request.FILES['img2'])
         try:
             result = verify(img1, img2, model_name=request.POST.get('model'),
