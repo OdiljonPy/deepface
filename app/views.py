@@ -26,6 +26,43 @@ def verify_view(request):
 
 
 @api_view(['GET', 'POST'])
+def liveness_view(request):
+    if request.method == 'GET':
+        data = {
+            'status': 'ok'
+        }
+        return Response(data)
+
+    elif request.method == 'POST':
+        import time
+        import torch
+        import pandas as pd
+        import albumentations as albu
+        from iglovikov_helper_functions.utils.image_utils import load_rgb
+        from datasouls_antispoof.pre_trained_models import create_model
+        from datasouls_antispoof.class_mapping import class_mapping
+
+        model = create_model("tf_efficientnet_b3_ns")
+        model.eval()
+
+        transform = albu.Compose([albu.PadIfNeeded(min_height=400, min_width=400),
+                                  albu.CenterCrop(height=400, width=400),
+                                  albu.Normalize(p=1),
+                                  albu.pytorch.ToTensorV2(p=1)], p=1)
+
+        image = load_rgb("")
+        before = time.time()
+        with torch.no_grad():
+            prediction = model(torch.unsqueeze(transform(image=image)['image'], 0)).numpy()[0]
+        after = time.time()
+        df = pd.DataFrame({"prediction": prediction, "class_name": class_mapping.keys()})
+        result = {
+            'time': after - before
+        }
+        return Response(result, status=status.HTTP_201_CREATED)
+
+
+@api_view(['GET', 'POST'])
 def test_view(request):
     if request.method == 'GET':
         data = {
